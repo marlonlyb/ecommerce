@@ -1,6 +1,7 @@
 package services
 
 import (
+	"errors"
 	"fmt"
 	"time"
 
@@ -88,10 +89,32 @@ func (p Product) GetByID(ID uuid.UUID) (model.Product, error) {
 	return product, nil
 }
 
+func (p Product) GetStoreByID(ID uuid.UUID) (model.StoreProduct, error) {
+	storeProduct, err := p.Repository.GetStoreByID(ID)
+	if err != nil {
+		return model.StoreProduct{}, fmt.Errorf("%s %w", "Repository.GetStoreByID(ID)", err)
+	}
+
+	if !storeProduct.Active {
+		return model.StoreProduct{}, errors.New("product inactive")
+	}
+
+	return storeProduct, nil
+}
+
 func (p Product) GetAll() (model.Products, error) {
 	products, err := p.Repository.GetAll()
 	if err != nil {
 		return model.Products{}, fmt.Errorf("%s %w", "Repository.GetAll()", err)
 	}
+	return products, nil
+}
+
+func (p Product) GetStoreAll() ([]model.StoreProduct, error) {
+	products, err := p.Repository.GetStoreAll()
+	if err != nil {
+		return nil, fmt.Errorf("%s %w", "Repository.GetStoreAll()", err)
+	}
+
 	return products, nil
 }

@@ -15,6 +15,11 @@ errores producidos en los procesos del servidor*/
 type HTTPErrorHandler func(err error, c Context) */
 
 func HTTPErrorHandler(err error, c echo.Context) {
+	contractErr, ok := err.(*model.ContractError)
+	if ok {
+		_ = c.JSON(contractErr.StatusHTTP, contractErr.Response)
+		return
+	}
 
 	/* verificamos si es del tipo *model.Error */
 	e, ok := err.(*model.Error)

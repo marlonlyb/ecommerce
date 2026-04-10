@@ -1,6 +1,10 @@
 package handlers
 
 import (
+	"errors"
+	"time"
+
+	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 
 	"github.com/mlbautomation/ProyectoEMLB/domain/ports/user"
@@ -41,6 +45,21 @@ func (h *User) Create(c echo.Context) error {
 	//return c.JSON(http.StatusOK, m)
 }
 
+func (h *User) Register(c echo.Context) error {
+	m := model.User{}
+	if err := c.Bind(&m); err != nil {
+		return response.ContractError(400, "validation_error", "Los datos enviados no son válidos")
+	}
+
+	if err := h.service.Create(&m); err != nil {
+		return response.ContractError(400, "validation_error", "No fue posible registrar el usuario")
+	}
+
+	return c.JSON(response.ContractCreated(map[string]interface{}{
+		"user": toStoreUser(m),
+	}))
+}
+
 func (h *User) GetAll(c echo.Context) error {
 	users, err := h.service.GetAll()
 	if err != nil {
@@ -48,4 +67,30 @@ func (h *User) GetAll(c echo.Context) error {
 	}
 
 	return c.JSON(h.responser.OK(users))
+}
+
+func (h *User) Me(c echo.Context) error {
+	userID, ok := c.Get("userID").(uuid.UUID)
+	if !ok || userID == uuid.Nil {
+		return response.ContractError(401, "authentication_required", "Debes iniciar sesión para continuar")
+	}
+
+	userData, err := h.service.GetByID(userID)
+	if err != nil {
+		if errors.Is(err, model.ErrInvalidID) {
+			return response.ContractError(404, "not_found", "Usuario no encontrado")
+		}
+		return response.ContractError(404, "not_found", "Usuario no encontrado")
+	}
+
+	return c.JSON(response.ContractOK(toStoreUser(userData)))
+}
+
+func toStoreUser(userData model.User) model.StoreUser {
+	return model.StoreUser{
+		ID:        userData.ID,
+		Email:     userData.Email,
+		IsAdmin:   userData.IsAdmin,
+		CreatedAt: time.Unix(userData.CreatedAt, 0).UTC(),
+	}
 }

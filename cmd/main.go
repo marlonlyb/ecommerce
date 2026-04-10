@@ -39,6 +39,11 @@ func main() {
 	poService := services.NewPurchaseOrder(poRepository, pRepository)
 	poHandlers := handlers.NewPurchaseOrder(poService)
 
+	oRepository := postgres.NewOrder(dbPool)
+	ppOrdersClient := paypaladapter.NewOrdersClient(nil)
+	oService := services.NewOrder(oRepository, pRepository, ppOrdersClient)
+	oHandlers := handlers.NewOrder(oService)
+
 	lService := services.NewLogin(uService)
 	lHandlers := handlers.NewLogin(lService)
 
@@ -51,7 +56,7 @@ func main() {
 	ppProcessor := application.NewPaymentFlow(ppVerifier, poService, iService)
 	ppHandlers := handlers.NewPaypal(ppProcessor)
 
-	httpServer := NewServer(uHandlers, pHandlers, poHandlers, lHandlers, ppHandlers, iHandlers)
+	httpServer := NewServer(uHandlers, pHandlers, poHandlers, oHandlers, lHandlers, ppHandlers, iHandlers)
 	httpServer.Initialize()
 
 }

@@ -3,6 +3,9 @@ package postgres
 import (
 	"context"
 	"database/sql"
+	"encoding/json"
+	"sort"
+	"strings"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
@@ -125,6 +128,189 @@ func (p Product) GetAll() (model.Products, error) {
 	}
 
 	return ms, nil
+}
+
+func (p Product) GetStoreByID(ID uuid.UUID) (model.StoreProduct, error) {
+	products, err := p.getStoreProducts("WHERE p.id = $1", ID)
+	if err != nil {
+		return model.StoreProduct{}, err
+	}
+
+	if len(products) == 0 {
+		return model.StoreProduct{}, pgx.ErrNoRows
+	}
+
+	return products[0], nil
+}
+
+func (p Product) GetStoreAll() ([]model.StoreProduct, error) {
+	return p.getStoreProducts("WHERE p.active = TRUE", nil)
+}
+
+func (p Product) getStoreProducts(whereClause string, arg interface{}) ([]model.StoreProduct, error) {
+	query := `
+		SELECT
+			p.id,
+			COALESCE(NULLIF(p.name, ''), p.product_name) AS name,
+			COALESCE(NULLIF(p.slug, ''), regexp_replace(lower(COALESCE(NULLIF(p.name, ''), p.product_name)), '[^a-z0-9]+', '-', 'g')) AS slug,
+			p.description,
+			COALESCE(NULLIF(p.category, ''), 'general') AS category,
+			COALESCE(p.brand, '') AS brand,
+			p.images,
+			p.active,
+			v.id,
+			v.product_id,
+			v.sku,
+			v.color,
+			v.size,
+			v.price,
+			v.stock,
+			COALESCE(v.image_url, '')
+		FROM products p
+		LEFT JOIN product_variants v ON v.product_id = p.id
+	` + whereClause + `
+		ORDER BY p.created_at DESC, v.color ASC, v.size ASC`
+
+	var rows pgx.Rows
+	var err error
+	if arg == nil {
+		rows, err = p.db.Query(context.Background(), query)
+	} else {
+		rows, err = p.db.Query(context.Background(), query, arg)
+	}
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	productsMap := map[uuid.UUID]*model.StoreProduct{}
+	orderedIDs := make([]uuid.UUID, 0)
+
+	for rows.Next() {
+		var (
+			productID   uuid.UUID
+			name        string
+			slug        string
+			description string
+			category    string
+			brand       string
+			imagesRaw   []byte
+			active      bool
+			variantID   uuid.NullUUID
+			variantProd uuid.NullUUID
+			sku         sql.NullString
+			color       sql.NullString
+			size        sql.NullString
+			price       sql.NullFloat64
+			stock       sql.NullInt64
+			imageURL    sql.NullString
+		)
+
+		if err = rows.Scan(
+			&productID,
+			&name,
+			&slug,
+			&description,
+			&category,
+			&brand,
+			&imagesRaw,
+			&active,
+			&variantID,
+			&variantProd,
+			&sku,
+			&color,
+			&size,
+			&price,
+			&stock,
+			&imageURL,
+		); err != nil {
+			return nil, err
+		}
+
+		productData, exists := productsMap[productID]
+		if !exists {
+			images := []string{}
+			if len(imagesRaw) > 0 {
+				_ = json.Unmarshal(imagesRaw, &images)
+			}
+
+			productData = &model.StoreProduct{
+				ID:          productID,
+				Name:        name,
+				Slug:        slugify(slug),
+				Description: description,
+				Category:    category,
+				Brand:       strings.TrimSpace(brand),
+				Images:      images,
+				Active:      active,
+				Variants:    []model.StoreProductVariant{},
+			}
+			productsMap[productID] = productData
+			orderedIDs = append(orderedIDs, productID)
+		}
+
+		if variantID.Valid && variantProd.Valid && sku.Valid && color.Valid && size.Valid && price.Valid && stock.Valid {
+			variant := model.StoreProductVariant{
+				ID:        variantID.UUID,
+				ProductID: variantProd.UUID,
+				SKU:       sku.String,
+				Color:     color.String,
+				Size:      size.String,
+				Price:     price.Float64,
+				Stock:     int(stock.Int64),
+			}
+			if imageURL.Valid {
+				variant.ImageURL = imageURL.String
+			}
+			productData.Variants = append(productData.Variants, variant)
+		}
+	}
+
+	products := make([]model.StoreProduct, 0, len(orderedIDs))
+	for _, id := range orderedIDs {
+		productData := productsMap[id]
+		decorateStoreProduct(productData)
+		products = append(products, *productData)
+	}
+
+	return products, nil
+}
+
+func decorateStoreProduct(productData *model.StoreProduct) {
+	colors := map[string]struct{}{}
+	sizes := map[string]struct{}{}
+	priceFrom := 0.0
+	for i, variant := range productData.Variants {
+		if i == 0 || variant.Price < priceFrom {
+			priceFrom = variant.Price
+		}
+		colors[variant.Color] = struct{}{}
+		sizes[variant.Size] = struct{}{}
+	}
+
+	if len(productData.Variants) > 0 {
+		productData.PriceFrom = priceFrom
+		productData.AvailableColors = mapKeys(colors)
+		productData.AvailableSizes = mapKeys(sizes)
+	}
+}
+
+func mapKeys(values map[string]struct{}) []string {
+	result := make([]string, 0, len(values))
+	for value := range values {
+		result = append(result, value)
+	}
+	sort.Strings(result)
+	return result
+}
+
+func slugify(value string) string {
+	value = strings.TrimSpace(strings.ToLower(value))
+	value = strings.ReplaceAll(value, " ", "-")
+	for strings.Contains(value, "--") {
+		value = strings.ReplaceAll(value, "--", "-")
+	}
+	return strings.Trim(value, "-")
 }
 
 func (p Product) scanRow(s pgx.Row) (model.Product, error) {

@@ -10,6 +10,8 @@ import (
 	"github.com/mlbautomation/ProyectoEMLB/model"
 )
 
+const loginTokenTTL = 12 * time.Hour
+
 type Login struct {
 	/* services.Login usa un puerto creado en user
 	del tipo Service específico para Login que solo
@@ -32,7 +34,7 @@ func (l Login) Login(email, password, jwtSecretKey string) (model.User, string, 
 		Email:   user.Email,
 		IsAdmin: user.IsAdmin,
 		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: time.Now().Add(time.Hour * 24).Unix(),
+			ExpiresAt: time.Now().Add(loginTokenTTL).Unix(),
 		},
 	}
 

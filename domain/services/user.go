@@ -72,6 +72,16 @@ func (u *User) Create(m *model.User) error {
 	return nil
 }
 
+func (u *User) GetByID(ID uuid.UUID) (model.User, error) {
+	user, err := u.Repository.GetByID(ID)
+	if err != nil {
+		return model.User{}, fmt.Errorf("%s %w", "Repository.GetByID()", err)
+	}
+
+	user.Password = ""
+	return user, nil
+}
+
 func (u *User) GetByEmail(email string) (model.User, error) {
 	user, err := u.Repository.GetByEmail(email)
 	if err != nil {

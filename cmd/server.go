@@ -18,6 +18,7 @@ type Server struct {
 	uHandler  handlers.UserHandler
 	pHandler  handlers.ProductHandler
 	poHandler handlers.PurchaseOrderHandler
+	oHandler  handlers.OrderHandler
 	lHandler  handlers.LoginHandler
 	ppHandler handlers.PaypalHandler
 	irHandler handlers.InvoiceHandler
@@ -27,6 +28,7 @@ func NewServer(
 	uHandler handlers.UserHandler,
 	pHandler handlers.ProductHandler,
 	poHandler handlers.PurchaseOrderHandler,
+	oHandler handlers.OrderHandler,
 	lHandler handlers.LoginHandler,
 	ppHandler handlers.PaypalHandler,
 	irHandler handlers.InvoiceHandler) *Server {
@@ -35,6 +37,7 @@ func NewServer(
 		uHandler:  uHandler,
 		pHandler:  pHandler,
 		poHandler: poHandler,
+		oHandler:  oHandler,
 		lHandler:  lHandler,
 		ppHandler: ppHandler,
 		irHandler: irHandler,
@@ -51,10 +54,12 @@ func (s *Server) Initialize() {
 
 	routes.UserAdmin(e, s.uHandler, authMiddleware.IsValid, authMiddleware.IsAdmin)
 	routes.UserPublic(e, s.uHandler)
+	routes.UserPrivate(e, s.uHandler, authMiddleware.IsValid)
 
 	routes.ProductAdmin(e, s.pHandler, authMiddleware.IsValid, authMiddleware.IsAdmin)
 	routes.ProductPublic(e, s.pHandler)
 
+	routes.OrdersPrivate(e, s.oHandler, authMiddleware.IsValid)
 	routes.PurchaseOrderPrivate(e, s.poHandler, authMiddleware.IsValid)
 
 	routes.LoginPublic(e, s.lHandler)

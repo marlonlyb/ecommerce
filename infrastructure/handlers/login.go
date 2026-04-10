@@ -3,11 +3,13 @@ package handlers
 import (
 	"os"
 	"strings"
+	"time"
 
 	"github.com/labstack/echo/v4"
 
 	"github.com/mlbautomation/ProyectoEMLB/domain/ports/login"
 	"github.com/mlbautomation/ProyectoEMLB/infrastructure/handlers/response"
+	"github.com/mlbautomation/ProyectoEMLB/model"
 )
 
 type loginRequest struct {
@@ -30,18 +32,27 @@ func (h *Login) Login(c echo.Context) error {
 
 	err := c.Bind(&m)
 	if err != nil {
-		return h.responser.BindFailed(c, "handlers-Login-Login-c.Bind(&m)", err)
+		return response.ContractError(400, "validation_error", "Los datos enviados no son válidos")
 	}
 
 	userModel, tokenSigned, err := h.service.Login(m.Email, m.Password, os.Getenv("JWT_SECRET_KEY"))
 	if err != nil {
 		if strings.Contains(err.Error(), "crypto/bcrypt: hashedPassword is not the hash of the given password") ||
 			strings.Contains(err.Error(), "no rows in result set") {
-			return h.responser.HashedPassword(c, "handlers-Login-Login-h.service.Login()", err)
+			return response.ContractError(401, "invalid_credentials", "Email o contraseña inválidos")
 		}
-		return h.responser.Error(c, "handlers-Login-Login-h.service.Login()", err)
+		return response.ContractError(500, "unexpected_error", "No fue posible iniciar sesión")
 	}
 
-	data := map[string]interface{}{"user": userModel, "token": tokenSigned}
-	return c.JSON(h.responser.OK(data))
+	data := map[string]interface{}{
+		"user": model.StoreUser{
+			ID:        userModel.ID,
+			Email:     userModel.Email,
+			IsAdmin:   userModel.IsAdmin,
+			CreatedAt: time.Unix(userModel.CreatedAt, 0).UTC(),
+		},
+		"token":      tokenSigned,
+		"expires_in": int((12 * time.Hour).Seconds()),
+	}
+	return c.JSON(response.ContractOK(data))
 }

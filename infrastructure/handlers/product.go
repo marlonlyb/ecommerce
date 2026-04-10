@@ -1,6 +1,9 @@
 package handlers
 
 import (
+	"errors"
+	"strings"
+
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 
@@ -84,6 +87,26 @@ func (h *Product) GetByID(c echo.Context) error {
 	return c.JSON(h.responser.OK(productData))
 }
 
+func (h *Product) GetStoreByID(c echo.Context) error {
+	ID, err := uuid.Parse(c.Param("id"))
+	if err != nil {
+		return response.ContractError(400, "validation_error", "El identificador del producto no es válido")
+	}
+
+	productData, err := h.service.GetStoreByID(ID)
+	if err != nil {
+		if errors.Is(err, model.ErrInvalidID) || strings.Contains(err.Error(), "no rows") {
+			return response.ContractError(404, "not_found", "Producto no encontrado")
+		}
+		if strings.Contains(strings.ToLower(err.Error()), "inactive") {
+			return response.ContractError(404, "not_found", "Producto no encontrado")
+		}
+		return response.ContractError(500, "unexpected_error", "No fue posible obtener el producto")
+	}
+
+	return c.JSON(response.ContractOK(productData))
+}
+
 /* Paginar el GETALL, en el query param del endpoint recibimos:
 limit(cuantos registros quieren recibir) y page (en que páquina quieren mostrar)
 offset: se genera limit*pag -limit */
@@ -95,4 +118,13 @@ func (h *Product) GetAll(c echo.Context) error {
 	}
 
 	return c.JSON(h.responser.OK(products))
+}
+
+func (h *Product) GetStoreAll(c echo.Context) error {
+	products, err := h.service.GetStoreAll()
+	if err != nil {
+		return response.ContractError(500, "unexpected_error", "No fue posible obtener el catálogo")
+	}
+
+	return c.JSON(response.ContractOK(map[string]interface{}{"items": products}))
 }

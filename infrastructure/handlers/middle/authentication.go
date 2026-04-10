@@ -27,13 +27,12 @@ func (am *AuthMiddleware) IsValid(next echo.HandlerFunc) echo.HandlerFunc {
 		// obtiene el token de body
 		token, err := getTokenFromRequest(c.Request())
 		if err != nil {
-			return am.responser.Error(c, "middle-AuthMiddleware-IsValid-getTokenFromRequest(c.Request())", err)
+			return response.ContractError(http.StatusUnauthorized, "authentication_required", "Debes iniciar sesión para continuar")
 		}
 		// valida el token
 		isValid, claims := am.validate(token)
 		if !isValid {
-			err = errors.New("the token is not valid")
-			return am.responser.Error(c, "middle-AuthMiddleware-IsValid-am.validate(token)", err)
+			return response.ContractError(http.StatusUnauthorized, "authentication_required", "Debes iniciar sesión para continuar")
 		}
 
 		c.Set("userID", claims.UserID)
@@ -48,8 +47,7 @@ func (am *AuthMiddleware) IsAdmin(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		isAdmin, ok := c.Get("isAdmin").(bool)
 		if !isAdmin || !ok {
-			err := errors.New("you are not admin")
-			return am.responser.Error(c, "middle-AuthMiddleware-IsAdmin-c.Get('isAdmin').(bool)", err)
+			return response.ContractError(http.StatusForbidden, "forbidden", "No tienes permisos para realizar esta acción")
 		}
 
 		return next(c)

@@ -21,6 +21,6 @@ func ProductAdmin(e *echo.Echo, h handlers.ProductHandler, middlewares ...echo.M
 func ProductPublic(e *echo.Echo, h handlers.ProductHandler) {
 	g := e.Group("/api/v1/public/products")
 
-	g.GET("", h.GetAll)
-	g.GET("/:id", h.GetByID)
+	g.GET("", h.GetStoreAll)
+	g.GET("/:id", h.GetStoreByID)
 }
