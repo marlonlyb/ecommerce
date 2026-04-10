@@ -9,6 +9,7 @@ import { ProductDetailPage } from '../features/catalog/ProductDetailPage';
 import { CartPage } from '../features/cart/CartPage';
 import { CheckoutPage } from '../features/checkout/CheckoutPage';
 import { OrdersPage } from '../features/orders/OrdersPage';
+import { OrderDetailPage } from '../features/orders/OrderDetailPage';
 import { ProfilePage } from '../features/profile/ProfilePage';
 import { RequireAuth } from '../shared/routing/RequireAuth';
 import { NotFoundPage } from '../shared/ui/NotFoundPage';
@@ -40,6 +41,7 @@ export const router = createBrowserRouter([
         children: [
           { index: true, element: <ProfilePage /> },
           { path: 'orders', element: <OrdersPage /> },
+          { path: 'orders/:id', element: <OrderDetailPage /> },
         ],
       },
     ],

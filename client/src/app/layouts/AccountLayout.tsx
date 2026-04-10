@@ -1,4 +1,6 @@
-import { NavLink, Outlet } from 'react-router-dom';
+import { NavLink, Outlet, useNavigate } from 'react-router-dom';
+
+import { useSession } from '../providers/SessionProvider';
 
 const accountLinks = [
   { to: '/profile', label: 'Profile' },
@@ -7,6 +9,14 @@ const accountLinks = [
 ] as const;
 
 export function AccountLayout() {
+  const { user, logout } = useSession();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/', { replace: true });
+  };
+
   return (
     <div className="app-shell">
       <header className="app-header">
@@ -27,6 +37,14 @@ export function AccountLayout() {
               {link.label}
             </NavLink>
           ))}
+
+          {user ? (
+            <span className="nav-link nav-link--user">{user.email}</span>
+          ) : null}
+
+          <button className="nav-link nav-link--logout" onClick={handleLogout} type="button">
+            Logout
+          </button>
         </nav>
       </header>
 
