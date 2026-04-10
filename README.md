@@ -25,6 +25,7 @@ Create an empty PostgreSQL database and run the SQL scripts found in the `sqlmig
 3. `20240625_2312_create_purchase_order.sql`
 4. `20240627_1503_create_invoice.sql`
 5. `20240627_1505_create_invoice_details.sql`
+6. `20260410_1200_store_mvp_base.sql`
 
 ### 3. Environment Configuration
 Create a `.env` file in the root directory based on the variables required by `cmd/environment.go`:
@@ -70,6 +71,23 @@ To run the unit and integration tests (which cover orchestration, handlers, and 
 ```bash
 go test ./... -v
 ```
+
+## Store MVP Documentation
+
+The planning and technical artifacts for the store MVP are grouped in `docs/store-mvp/`:
+
+- `docs/store-mvp/PRD-Frontend-TiendaRopa.md`
+- `docs/store-mvp/API-Contract-TiendaRopa.md`
+- `docs/store-mvp/DB-Schema-TiendaRopa.md`
+- `docs/store-mvp/Roadmap-Ejecucion-TiendaRopa.md`
+- `docs/store-mvp/Tickets-MVP-TiendaRopa.md`
+- `docs/store-mvp/Spec-Frontend-TiendaRopa.md`
+- `docs/store-mvp/Spec-Backend-TiendaRopa.md`
+
+## Session Summaries
+
+Chronological project summaries are stored in `docs/session-summaries/`.
+Use date-first filenames (`YYYY-MM-DD-description.md`) so they remain naturally ordered over time.
 
 ## Project Client (Testing)
 A static HTML file is located in `client/index.html`. You can serve this file locally to test static PayPal buttons against your backend endpoints.
