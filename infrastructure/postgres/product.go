@@ -23,6 +23,10 @@ var pFields = []string{
 	"images",
 	"description",
 	"features",
+	"name",
+	"category",
+	"brand",
+	"active",
 	"created_at",
 	"updated_at",
 }
@@ -52,6 +56,10 @@ func (p Product) Create(m *model.Product) error {
 		m.Images,
 		m.Description,
 		m.Features,
+		NullIfEmpty(m.Name),
+		NullIfEmpty(m.Category),
+		NullIfEmpty(m.Brand),
+		m.Active,
 		m.CreatedAt,
 		Int64ToNull(m.UpdatedAt),
 	)
@@ -71,6 +79,10 @@ func (p Product) Update(m *model.Product) error {
 		m.Images,
 		m.Description,
 		m.Features,
+		NullIfEmpty(m.Name),
+		NullIfEmpty(m.Category),
+		NullIfEmpty(m.Brand),
+		m.Active,
 		m.UpdatedAt,
 		m.ID,
 	)
@@ -86,6 +98,78 @@ func (p Product) Delete(ID uuid.UUID) error {
 		context.Background(),
 		pPsqlDelete,
 		ID,
+	)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (p Product) UpdateActive(ID uuid.UUID, active bool) error {
+	_, err := p.db.Exec(
+		context.Background(),
+		"UPDATE products SET active = $1, updated_at = EXTRACT(EPOCH FROM NOW())::int WHERE id = $2",
+		active,
+		ID,
+	)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (p Product) CreateVariants(productID uuid.UUID, variants []model.StoreProductVariant) error {
+	if len(variants) == 0 {
+		return nil
+	}
+
+	query := `
+		INSERT INTO product_variants (id, product_id, sku, color, size, price, stock, image_url, created_at, updated_at)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, NOW(), NOW())`
+
+	for _, v := range variants {
+		variantID := v.ID
+		if variantID == uuid.Nil {
+			var err error
+			variantID, err = uuid.NewUUID()
+			if err != nil {
+				return err
+			}
+		}
+
+		imageURL := sql.NullString{}
+		if v.ImageURL != "" {
+			imageURL.String = v.ImageURL
+			imageURL.Valid = true
+		}
+
+		_, err := p.db.Exec(
+			context.Background(),
+			query,
+			variantID,
+			productID,
+			v.SKU,
+			v.Color,
+			v.Size,
+			v.Price,
+			v.Stock,
+			imageURL,
+		)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (p Product) DeleteVariantsByProductID(productID uuid.UUID) error {
+	_, err := p.db.Exec(
+		context.Background(),
+		"DELETE FROM product_variants WHERE product_id = $1",
+		productID,
 	)
 	if err != nil {
 		return err
@@ -131,6 +215,19 @@ func (p Product) GetAll() (model.Products, error) {
 }
 
 func (p Product) GetStoreByID(ID uuid.UUID) (model.StoreProduct, error) {
+	products, err := p.getStoreProducts("WHERE p.id = $1", ID)
+	if err != nil {
+		return model.StoreProduct{}, err
+	}
+
+	if len(products) == 0 {
+		return model.StoreProduct{}, pgx.ErrNoRows
+	}
+
+	return products[0], nil
+}
+
+func (p Product) GetStoreByIDAdmin(ID uuid.UUID) (model.StoreProduct, error) {
 	products, err := p.getStoreProducts("WHERE p.id = $1", ID)
 	if err != nil {
 		return model.StoreProduct{}, err
@@ -322,6 +419,9 @@ func (p Product) scanRow(s pgx.Row) (model.Product, error) {
 	var m model.Product
 
 	updateAtNull := sql.NullInt64{}
+	nameNull := sql.NullString{}
+	categoryNull := sql.NullString{}
+	brandNull := sql.NullString{}
 
 	err := s.Scan(
 		&m.ID,
@@ -330,6 +430,10 @@ func (p Product) scanRow(s pgx.Row) (model.Product, error) {
 		&m.Images,
 		&m.Description,
 		&m.Features,
+		&nameNull,
+		&categoryNull,
+		&brandNull,
+		&m.Active,
 		&m.CreatedAt,
 		&updateAtNull,
 	)
@@ -338,6 +442,9 @@ func (p Product) scanRow(s pgx.Row) (model.Product, error) {
 	}
 
 	m.UpdatedAt = updateAtNull.Int64
+	m.Name = nameNull.String
+	m.Category = categoryNull.String
+	m.Brand = brandNull.String
 
 	return m, nil
 }

@@ -10,12 +10,17 @@ type Repository interface {
 	Create(m *model.Product) error
 	Update(m *model.Product) error
 	Delete(ID uuid.UUID) error
+	UpdateActive(ID uuid.UUID, active bool) error
 
 	GetByID(ID uuid.UUID) (model.Product, error)
 	GetAll() (model.Products, error)
 	GetStoreByID(ID uuid.UUID) (model.StoreProduct, error)
+	GetStoreByIDAdmin(ID uuid.UUID) (model.StoreProduct, error)
 	GetStoreAll() ([]model.StoreProduct, error)
 	GetStoreAllAdmin() ([]model.StoreProduct, error)
+
+	CreateVariants(productID uuid.UUID, variants []model.StoreProductVariant) error
+	DeleteVariantsByProductID(productID uuid.UUID) error
 }
 
 type RepositoryPurchaseOrder interface {
@@ -26,10 +31,14 @@ type Service interface {
 	Create(m *model.Product) error
 	Update(m *model.Product) error
 	Delete(ID uuid.UUID) error
+	UpdateStatus(ID uuid.UUID, active bool) (model.StoreProduct, error)
+	CreateVariants(productID uuid.UUID, variants []model.StoreProductVariant) error
+	ReplaceVariants(productID uuid.UUID, variants []model.StoreProductVariant) error
 
 	GetByID(ID uuid.UUID) (model.Product, error)
 	GetAll() (model.Products, error)
 	GetStoreByID(ID uuid.UUID) (model.StoreProduct, error)
+	GetStoreByIDAdmin(ID uuid.UUID) (model.StoreProduct, error)
 	GetStoreAll() ([]model.StoreProduct, error)
 	GetStoreAllAdmin() ([]model.StoreProduct, error)
 }

@@ -8,6 +8,10 @@ import (
 
 var ErrFieldsAreEmpty = "the fields are empty"
 
+func NullIfEmpty(s string) sql.NullString {
+	return sql.NullString{String: s, Valid: s != ""}
+}
+
 func BuildSQLInsert(table string, fields []string) string {
 	if len(fields) == 0 {
 		return ErrFieldsAreEmpty

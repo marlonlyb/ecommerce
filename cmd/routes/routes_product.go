@@ -15,6 +15,7 @@ func ProductAdmin(e *echo.Echo, h handlers.ProductHandler, middlewares ...echo.M
 	g.DELETE("/:id", h.Delete)
 	g.GET("", h.GetAllStore)
 	g.GET("/:id", h.GetByID)
+	g.PATCH("/:id/status", h.UpdateStatus)
 }
 
 func ProductPublic(e *echo.Echo, h handlers.ProductHandler) {

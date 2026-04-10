@@ -18,6 +18,7 @@ type ProductHandler interface {
 	GetStoreByID(c echo.Context) error
 	GetStoreAll(c echo.Context) error
 	GetAllStore(c echo.Context) error
+	UpdateStatus(c echo.Context) error
 }
 
 type PurchaseOrderHandler interface {

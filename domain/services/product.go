@@ -81,6 +81,20 @@ func (p Product) Delete(ID uuid.UUID) error {
 	return nil
 }
 
+func (p Product) UpdateStatus(ID uuid.UUID, active bool) (model.StoreProduct, error) {
+	err := p.Repository.UpdateActive(ID, active)
+	if err != nil {
+		return model.StoreProduct{}, fmt.Errorf("%s %w", "Repository.UpdateActive(ID, active)", err)
+	}
+
+	productData, err := p.Repository.GetStoreByIDAdmin(ID)
+	if err != nil {
+		return model.StoreProduct{}, fmt.Errorf("%s %w", "Repository.GetStoreByIDAdmin(ID)", err)
+	}
+
+	return productData, nil
+}
+
 func (p Product) GetByID(ID uuid.UUID) (model.Product, error) {
 	product, err := p.Repository.GetByID(ID)
 	if err != nil {
@@ -97,6 +111,15 @@ func (p Product) GetStoreByID(ID uuid.UUID) (model.StoreProduct, error) {
 
 	if !storeProduct.Active {
 		return model.StoreProduct{}, errors.New("product inactive")
+	}
+
+	return storeProduct, nil
+}
+
+func (p Product) GetStoreByIDAdmin(ID uuid.UUID) (model.StoreProduct, error) {
+	storeProduct, err := p.Repository.GetStoreByIDAdmin(ID)
+	if err != nil {
+		return model.StoreProduct{}, fmt.Errorf("%s %w", "Repository.GetStoreByIDAdmin(ID)", err)
 	}
 
 	return storeProduct, nil
@@ -126,4 +149,25 @@ func (p Product) GetStoreAllAdmin() ([]model.StoreProduct, error) {
 	}
 
 	return products, nil
+}
+
+func (p Product) CreateVariants(productID uuid.UUID, variants []model.StoreProductVariant) error {
+	err := p.Repository.CreateVariants(productID, variants)
+	if err != nil {
+		return fmt.Errorf("%s %w", "Repository.CreateVariants()", err)
+	}
+	return nil
+}
+
+func (p Product) ReplaceVariants(productID uuid.UUID, variants []model.StoreProductVariant) error {
+	err := p.Repository.DeleteVariantsByProductID(productID)
+	if err != nil {
+		return fmt.Errorf("%s %w", "Repository.DeleteVariantsByProductID()", err)
+	}
+
+	err = p.Repository.CreateVariants(productID, variants)
+	if err != nil {
+		return fmt.Errorf("%s %w", "Repository.CreateVariants()", err)
+	}
+	return nil
 }
