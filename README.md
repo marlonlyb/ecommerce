@@ -33,7 +33,7 @@ Create a `.env` file in the root directory based on the variables required by `c
 ```env
 # Server
 SERVER_PORT=8080
-ALLOWED_ORIGINS=http://localhost:5500,http://127.0.0.1:5500
+ALLOWED_ORIGINS=http://localhost:5500,http://127.0.0.1:5500,http://localhost:5173
 ALLOWED_METHODS=GET,POST,PUT,DELETE,OPTIONS
 IMAGES_DIR=./images
 
