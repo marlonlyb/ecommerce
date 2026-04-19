@@ -7,7 +7,7 @@ import (
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
 
-	"github.com/mlbautomation/ProyectoEMLB/model"
+	"github.com/mlbautomation/Ecommmerce_MLB/model"
 )
 
 const idTableDetails = "invoice_details"

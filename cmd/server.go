@@ -8,10 +8,10 @@ import (
 
 	"github.com/labstack/echo/v4"
 
-	"github.com/mlbautomation/ProyectoEMLB/cmd/routes"
-	"github.com/mlbautomation/ProyectoEMLB/infrastructure/handlers"
-	"github.com/mlbautomation/ProyectoEMLB/infrastructure/handlers/middle"
-	"github.com/mlbautomation/ProyectoEMLB/infrastructure/handlers/response"
+	"github.com/mlbautomation/Ecommmerce_MLB/cmd/routes"
+	"github.com/mlbautomation/Ecommmerce_MLB/infrastructure/handlers"
+	"github.com/mlbautomation/Ecommmerce_MLB/infrastructure/handlers/middle"
+	"github.com/mlbautomation/Ecommmerce_MLB/infrastructure/handlers/response"
 )
 
 type Server struct {
@@ -83,7 +83,7 @@ func health(e *echo.Echo) {
 			map[string]string{
 				"time":         time.Now().String(),
 				"message":      "Hola mundo desde MLB!",
-				"service_name": "Proyecto Ecommerce",
+				"service_name": "Ecommmerce_MLB",
 			},
 		)
 	})

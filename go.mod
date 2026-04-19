@@ -1,4 +1,4 @@
-module github.com/mlbautomation/ProyectoEMLB
+module github.com/mlbautomation/Ecommmerce_MLB
 
 go 1.20
 

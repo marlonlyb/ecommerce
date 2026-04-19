@@ -3,7 +3,7 @@ package routes
 import (
 	"github.com/labstack/echo/v4"
 
-	"github.com/mlbautomation/ProyectoEMLB/infrastructure/handlers"
+	"github.com/mlbautomation/Ecommmerce_MLB/infrastructure/handlers"
 )
 
 func PurchaseOrderPrivate(e *echo.Echo, h handlers.PurchaseOrderHandler, middlewares ...echo.MiddlewareFunc) {

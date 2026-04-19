@@ -8,7 +8,7 @@ import (
 	"testing"
 
 	"github.com/labstack/echo/v4"
-	"github.com/mlbautomation/ProyectoEMLB/infrastructure/handlers/response"
+	"github.com/mlbautomation/Ecommmerce_MLB/infrastructure/handlers/response"
 )
 
 type mockPaymentWebhookProcessor struct {

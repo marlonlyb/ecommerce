@@ -1,6 +1,6 @@
 # Resumen del Proceso SDD: Architecture Hardening
 
-Este documento resume el ciclo completo de Spec-Driven Development (SDD) ejecutado para el refactor arquitectónico del proyecto `ProyectoEMLB`.
+Este documento resume el ciclo completo de Spec-Driven Development (SDD) ejecutado para el refactor arquitectónico del proyecto `Ecommmerce_MLB`.
 
 ## 1. sdd-init (Inicialización)
 Se inicializó el contexto SDD en el proyecto, detectando la tecnología base:

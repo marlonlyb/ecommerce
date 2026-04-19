@@ -2,7 +2,7 @@ package routes
 
 import (
 	"github.com/labstack/echo/v4"
-	"github.com/mlbautomation/ProyectoEMLB/infrastructure/handlers"
+	"github.com/mlbautomation/Ecommmerce_MLB/infrastructure/handlers"
 )
 
 // publicRoutes handle the routes that not requires a validation of any kind to be use

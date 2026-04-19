@@ -11,7 +11,7 @@ export function StoreLayout() {
     <div className="app-shell">
       <header className="app-header">
         <div>
-          <p className="eyebrow">ProyectoEMLB</p>
+          <p className="eyebrow">Ecommmerce_MLB</p>
           <h1>Store frontend MVP</h1>
         </div>
 

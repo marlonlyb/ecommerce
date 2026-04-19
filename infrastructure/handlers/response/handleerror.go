@@ -5,7 +5,7 @@ import (
 
 	"github.com/labstack/echo/v4"
 
-	"github.com/mlbautomation/ProyectoEMLB/model"
+	"github.com/mlbautomation/Ecommmerce_MLB/model"
 )
 
 /* Esta función la utilizaremos para el tratamiento de los

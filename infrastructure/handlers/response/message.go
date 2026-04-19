@@ -7,7 +7,7 @@ import (
 
 	//revisar este paquete log.Warnf("%s", e.Error())
 
-	"github.com/mlbautomation/ProyectoEMLB/model"
+	"github.com/mlbautomation/Ecommmerce_MLB/model"
 )
 
 const (

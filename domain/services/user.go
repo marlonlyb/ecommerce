@@ -7,8 +7,8 @@ import (
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 
-	"github.com/mlbautomation/ProyectoEMLB/domain/ports/user"
-	"github.com/mlbautomation/ProyectoEMLB/model"
+	"github.com/mlbautomation/Ecommmerce_MLB/domain/ports/user"
+	"github.com/mlbautomation/Ecommmerce_MLB/model"
 )
 
 // servicio, damain o usecase

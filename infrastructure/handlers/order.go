@@ -7,10 +7,10 @@ import (
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 
-	orderport "github.com/mlbautomation/ProyectoEMLB/domain/ports/order"
-	"github.com/mlbautomation/ProyectoEMLB/domain/services"
-	"github.com/mlbautomation/ProyectoEMLB/infrastructure/handlers/response"
-	"github.com/mlbautomation/ProyectoEMLB/model"
+	orderport "github.com/mlbautomation/Ecommmerce_MLB/domain/ports/order"
+	"github.com/mlbautomation/Ecommmerce_MLB/domain/services"
+	"github.com/mlbautomation/Ecommmerce_MLB/infrastructure/handlers/response"
+	"github.com/mlbautomation/Ecommmerce_MLB/model"
 )
 
 type Order struct {

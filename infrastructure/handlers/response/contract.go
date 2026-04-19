@@ -3,7 +3,7 @@ package response
 import (
 	"net/http"
 
-	"github.com/mlbautomation/ProyectoEMLB/model"
+	"github.com/mlbautomation/Ecommmerce_MLB/model"
 )
 
 func ContractData(status int, data interface{}) (int, map[string]interface{}) {

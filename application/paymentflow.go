@@ -9,8 +9,8 @@ import (
 	"strings"
 
 	"github.com/google/uuid"
-	"github.com/mlbautomation/ProyectoEMLB/domain/ports/invoice"
-	"github.com/mlbautomation/ProyectoEMLB/domain/ports/purchaseorder"
+	"github.com/mlbautomation/Ecommmerce_MLB/domain/ports/invoice"
+	"github.com/mlbautomation/Ecommmerce_MLB/domain/ports/purchaseorder"
 )
 
 const (

@@ -3,7 +3,7 @@ package purchaseorder
 import (
 	"github.com/google/uuid"
 
-	"github.com/mlbautomation/ProyectoEMLB/model"
+	"github.com/mlbautomation/Ecommmerce_MLB/model"
 )
 
 type Repository interface {

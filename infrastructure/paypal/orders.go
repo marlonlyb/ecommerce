@@ -10,8 +10,8 @@ import (
 	"os"
 	"strings"
 
-	orderport "github.com/mlbautomation/ProyectoEMLB/domain/ports/order"
-	"github.com/mlbautomation/ProyectoEMLB/model"
+	orderport "github.com/mlbautomation/Ecommmerce_MLB/domain/ports/order"
+	"github.com/mlbautomation/Ecommmerce_MLB/model"
 )
 
 type OrdersClient struct {

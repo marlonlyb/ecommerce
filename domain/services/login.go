@@ -6,8 +6,8 @@ import (
 
 	"github.com/golang-jwt/jwt"
 
-	"github.com/mlbautomation/ProyectoEMLB/domain/ports/user"
-	"github.com/mlbautomation/ProyectoEMLB/model"
+	"github.com/mlbautomation/Ecommmerce_MLB/domain/ports/user"
+	"github.com/mlbautomation/Ecommmerce_MLB/model"
 )
 
 const loginTokenTTL = 12 * time.Hour

@@ -1,4 +1,4 @@
-# ProyectoEMLB
+# Ecommmerce_MLB
 
 Backend API for an e-commerce platform built with Go (v1.20) and the Echo web framework. It uses PostgreSQL as the database and integrates with PayPal for payments.
 

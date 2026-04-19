@@ -7,8 +7,8 @@ import (
 
 	"github.com/labstack/echo/v4"
 
-	"github.com/mlbautomation/ProyectoEMLB/application"
-	"github.com/mlbautomation/ProyectoEMLB/infrastructure/handlers/response"
+	"github.com/mlbautomation/Ecommmerce_MLB/application"
+	"github.com/mlbautomation/Ecommmerce_MLB/infrastructure/handlers/response"
 )
 
 type Paypal struct {

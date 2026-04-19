@@ -9,8 +9,8 @@ import (
 
 	"github.com/golang-jwt/jwt"
 	"github.com/labstack/echo/v4"
-	"github.com/mlbautomation/ProyectoEMLB/infrastructure/handlers/response"
-	"github.com/mlbautomation/ProyectoEMLB/model"
+	"github.com/mlbautomation/Ecommmerce_MLB/infrastructure/handlers/response"
+	"github.com/mlbautomation/Ecommmerce_MLB/model"
 )
 
 type AuthMiddleware struct {

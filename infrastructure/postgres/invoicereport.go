@@ -8,24 +8,24 @@ import (
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 
-	"github.com/mlbautomation/ProyectoEMLB/model"
+	"github.com/mlbautomation/Ecommmerce_MLB/model"
 )
 
 const (
 	psqlHeadInvoiceReport = `
-	SELECT invoices.id, invoices.user_id, invoices.purchase_order_id, invoices.created_at, 
-	invoices.updated_at, users.id, users.email, users.is_admin, users.details, users.created_at, 
+	SELECT invoices.id, invoices.user_id, invoices.purchase_order_id, invoices.created_at,
+	invoices.updated_at, users.id, users.email, users.is_admin, users.details, users.created_at,
 	users.updated_at
-	FROM invoices INNER JOIN users 
+	FROM invoices INNER JOIN users
 	ON invoices.user_id = users.id
 	`
 	psqlDetailInvoiceReport = `
-	SELECT invoice_details.id, invoice_details.invoice_id, invoice_details.product_id, 
-	invoice_details.amount, invoice_details.unit_price, invoice_details.created_at, 
-	invoice_details.updated_at, products.id, products.product_name, products.price, 
+	SELECT invoice_details.id, invoice_details.invoice_id, invoice_details.product_id,
+	invoice_details.amount, invoice_details.unit_price, invoice_details.created_at,
+	invoice_details.updated_at, products.id, products.product_name, products.price,
 	products.images, products.description, products.features, products.created_at,
-	products.updated_at	
-	FROM invoice_details INNER JOIN products ON invoice_details.product_id = products.id 
+	products.updated_at
+	FROM invoice_details INNER JOIN products ON invoice_details.product_id = products.id
 	WHERE invoice_details.invoice_id = $1
 	`
 )

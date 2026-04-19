@@ -3,11 +3,11 @@ package main
 import (
 	"log"
 
-	"github.com/mlbautomation/ProyectoEMLB/application"
-	"github.com/mlbautomation/ProyectoEMLB/domain/services"
-	"github.com/mlbautomation/ProyectoEMLB/infrastructure/handlers"
-	paypaladapter "github.com/mlbautomation/ProyectoEMLB/infrastructure/paypal"
-	"github.com/mlbautomation/ProyectoEMLB/infrastructure/postgres"
+	"github.com/mlbautomation/Ecommmerce_MLB/application"
+	"github.com/mlbautomation/Ecommmerce_MLB/domain/services"
+	"github.com/mlbautomation/Ecommmerce_MLB/infrastructure/handlers"
+	paypaladapter "github.com/mlbautomation/Ecommmerce_MLB/infrastructure/paypal"
+	"github.com/mlbautomation/Ecommmerce_MLB/infrastructure/postgres"
 )
 
 func main() {

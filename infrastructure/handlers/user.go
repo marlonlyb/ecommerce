@@ -7,9 +7,9 @@ import (
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 
-	"github.com/mlbautomation/ProyectoEMLB/domain/ports/user"
-	"github.com/mlbautomation/ProyectoEMLB/infrastructure/handlers/response"
-	"github.com/mlbautomation/ProyectoEMLB/model"
+	"github.com/mlbautomation/Ecommmerce_MLB/domain/ports/user"
+	"github.com/mlbautomation/Ecommmerce_MLB/infrastructure/handlers/response"
+	"github.com/mlbautomation/Ecommmerce_MLB/model"
 )
 
 /* date cuenta que a diferencia de model

@@ -9,9 +9,9 @@ import (
 
 	"github.com/google/uuid"
 
-	"github.com/mlbautomation/ProyectoEMLB/domain/ports/order"
-	"github.com/mlbautomation/ProyectoEMLB/domain/ports/product"
-	"github.com/mlbautomation/ProyectoEMLB/model"
+	"github.com/mlbautomation/Ecommmerce_MLB/domain/ports/order"
+	"github.com/mlbautomation/Ecommmerce_MLB/domain/ports/product"
+	"github.com/mlbautomation/Ecommmerce_MLB/model"
 )
 
 var (
